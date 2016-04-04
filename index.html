@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz</title>
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script src="js/function.js"></script>
+</head>
+<body>
+
+<!-- login -->
+<div data-role="page" id="signin">
+  <div data-role="main" class="ui-content" align="center">
+    <h1>Quiz</h1>
+    <form name="signin">
+      <input type="text" name="username" placeholder="E-mail">
+      <input type="password" name="password" placeholder="Senha">
+      <button type="submit">Entrar</button>
+      <a href="#signup" class="ui-btn" data-transition="slide">Cadastre-se</a>
+    </form>
+  </div>
+</div> 
+
+<!-- cadastro -->
+<div data-role="page" id="signup">
+  <div data-role="main" class="ui-content" align="center">
+    <h1>Quiz</h1>
+    <form name="signup">
+      <input type="text" name="username" placeholder="E-mail">
+      <input type="password" name="password" placeholder="Senha">
+      <button type="submit">Cadastrar</button>
+      <a href="#signin" class="ui-btn" data-transition="slide" data-direction="reverse">Login</a>
+    </form>
+  </div>
+</div>
+
+<!-- home-->
+<div data-role="page" id="home" data-position="fixed">  
+    <div data-role="header">
+        <a href="#" class="ui-btn ui-icon-search ui-btn-icon-left">Busca</a>
+        <h1>Home</h1>
+        <a href="#categories" data-transition="slideup" class="ui-btn ui-icon-bullets ui-btn-icon-left">Categorias</a>
+    </div>
+
+    <div data-role="main" class="ui-content">
+        <a href="#game" class="ui-btn">Jogar</a>
+    </div>
+
+    <div data-role="footer" data-position="fixed">
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#" data-icon="home">Home</a></li>
+                <li><a href="#" data-icon="user">Pessoas</a></li>
+                <li><a href="#" data-icon="comment">Chat</a></li>
+                <li><a href="#" data-icon="gear">Ajustes</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- categories-->
+<div data-role="page" id="categories">
+    <div data-role="header">
+        <a href="#home"  data-transition="slideup" data-direction="reverse" class="ui-btn ui-icon-delete ui-btn-icon-left">Cancelar</a>
+        <h1>Categorias</h1>
+    </div>
+    <div data-role="main" class="ui-content">
+      <form name="categories">
+        <fieldset data-role="controlgroup">
+            <label for="red">Red</label>
+            <input type="checkbox" name="favcolor" id="red" value="red">
+        </fieldset>
+      </form>
+    </div>
+</div>
+
+</body>
+</html>
