@@ -14,4 +14,5 @@ urlpatterns = [
     url(r'^api-token-auth/', 'rest_framework_jwt.views.obtain_jwt_token'),
     url(r'^admin/', admin.site.urls),
     url(r'^categories/$', views.categories),
+    url(r'^user-categories/(?P<category_id>\d+)/$', views.user_categories),
 ]

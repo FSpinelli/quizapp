@@ -125,10 +125,27 @@ $(document).ready(function(){
         });
 	});
 
-	// $(document).on("click", 'form[name="categories"] fieldset .ui-checkbox', function(){
-	//     if($(this).find('label').hasClass('ui-checkbox-off')){
-	//     	alert('checked');	
-	//     }
-	// });
+	$(document).on("click", 'form[name="categories"] fieldset .ui-checkbox', function(){
+	    if($(this).find('label').hasClass('ui-checkbox-off')){
+	    	// checked
+	    	var catId = $(this).find('input').attr('id');
+			$.ajax({
+	            url: baseUrl+"/user-categories/"+catId+"/",
+	            dataType : 'json',
+	            type: 'GET',
+				beforeSend: function (xhr) {
+				    xhr.setRequestHeader ("Authorization", "JWT "+localStorage.token);
+				},
+	            success: function(data, status, s) {
+	            	console.log(data);
+	            },
+	            error : function(res) {
+	            	console.log(res);
+	                alert('Ops! Ocorreu algum erro. Tente mais tarde.');
+	            },
+	            crossDomain:false
+			});
+	    }
+	});
 
 });
