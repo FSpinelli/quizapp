@@ -101,7 +101,6 @@ $(document).ready(function(){
 			    xhr.setRequestHeader ("Authorization", "JWT "+localStorage.token);
 			},
             success: function(data, status, s) {
-            	// console.log(data);
             	var categories = "";
             	for(i=0; i<data[0].categories.length; i++){
             		categories += '<label for="'+data[0].categories[i].pk+'" class="ui-btn ui-corner-all ui-btn-inherit ui-btn-icon-left ui-checkbox-off">'+data[0].categories[i].fields.category_pt+'</label><input type="checkbox" id="'+data[0].categories[i].pk	+'">';
@@ -126,13 +125,12 @@ $(document).ready(function(){
 	});
 
 	$(document).on("click", 'form[name="categories"] fieldset .ui-checkbox', function(){
+		var catId = $(this).find('input').attr('id');
 	    if($(this).find('label').hasClass('ui-checkbox-off')){
-	    	// checked
-	    	var catId = $(this).find('input').attr('id');
 			$.ajax({
 	            url: baseUrl+"/user-categories/"+catId+"/",
 	            dataType : 'json',
-	            type: 'GET',
+	            type: 'POST',
 				beforeSend: function (xhr) {
 				    xhr.setRequestHeader ("Authorization", "JWT "+localStorage.token);
 				},
@@ -145,7 +143,49 @@ $(document).ready(function(){
 	            },
 	            crossDomain:false
 			});
+	    }else{
+			$.ajax({
+	            url: baseUrl+"/user-categories/"+catId+"/",
+	            dataType : 'json',
+	            type: 'DELETE',
+				beforeSend: function (xhr) {
+				    xhr.setRequestHeader ("Authorization", "JWT "+localStorage.token);
+				},
+	            success: function(data, status, s) {
+	            	console.log(data);
+	            },
+	            error : function(res) {
+	            	console.log(res);
+	                alert('Ops! Ocorreu algum erro. Tente mais tarde.');
+	            },
+	            crossDomain:false
+			});  	
 	    }
+	});
+
+	$('#game').on("pagecreate",function(event){
+        $.ajax({
+            url: baseUrl+"/categories/",
+            dataType : 'json',
+            type: 'GET',
+			beforeSend: function (xhr) {
+			    xhr.setRequestHeader ("Authorization", "JWT "+localStorage.token);
+			},
+            success: function(data, status, s) {
+            	var categories = '<div data-role="controlgroup">';
+            	for(i=0; i<data[0].categories.length; i++){
+            		// categories += '<label for="'+data[0].categories[i].pk+'" class="ui-btn ui-corner-all ui-btn-inherit ui-btn-icon-left ui-checkbox-off">'+data[0].categories[i].fields.category_pt+'</label><input type="checkbox" id="'+data[0].categories[i].pk	+'">';
+            		categories += '<a href="#" class="ui-btn" data-category-id="'+data[0].categories[i].pk+'">'+data[0].categories[i].fields.category_pt+'</a>';
+            	}
+            	$('#game .ui-content').html(categories+'<div/>');
+            	$('#game .ui-content').trigger('create');
+            },
+            error : function(res) {
+            	console.log(res);
+                alert('Ops! Ocorreu algum erro. Tente mais tarde.');
+            },
+            crossDomain:false
+        });
 	});
 
 });

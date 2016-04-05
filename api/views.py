@@ -9,6 +9,7 @@ from django.http import HttpResponse
 from django.core import serializers
 from api.models import *
 from rest_framework.decorators import api_view
+from django.shortcuts import get_object_or_404
 
 from rest_framework.permissions import AllowAny
 
@@ -34,20 +35,17 @@ def categories(request):
     if request.method == 'GET':
         category = Category.objects.all()
         category_serializer = serializers.serialize("json", category)
-        user_category = UserCategory.objects.filter(pk=request.user.pk)
+        user_category = UserCategory.objects.all()
         user_category_serializer = serializers.serialize("json", user_category)
         return HttpResponse('[{"categories":'+category_serializer+', "userCategory":'+user_category_serializer+'}]')
 
 @api_view(['POST','DELETE'])
 def user_categories(request, category_id):
     user = User.objects.get(pk=request.user.pk)
-    category = Category.objects.filter(pk=category_id)
+    category = Category.objects.get(pk=category_id)
 
     if request.method == 'POST':
-        user_category = UserCategory()
-        user_category.user = user
-        user_category.category = category
-        user_category.save()
+        UserCategory.objects.get_or_create(user=user, category=category)
         return HttpResponse(200)
 
     elif request.method == 'DELETE':
