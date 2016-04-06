@@ -2,8 +2,6 @@ $(document).ready(function(){
 
 	if(localStorage.token == undefined){
 		$.mobile.changePage( '#signin');
-	}else{
-		$.mobile.changePage( '#home');
 	}
 
 	// base url
@@ -124,7 +122,7 @@ $(document).ready(function(){
         });
 	});
 
-	$(document).on("click", 'form[name="categories"] fieldset .ui-checkbox', function(){
+	$(document).on("click touchstart", 'form[name="categories"] fieldset .ui-checkbox', function(){
 		var catId = $(this).find('input').attr('id');
 	    if($(this).find('label').hasClass('ui-checkbox-off')){
 			$.ajax({
@@ -175,7 +173,7 @@ $(document).ready(function(){
             	var categories = '<div data-role="controlgroup">';
             	for(i=0; i<data[0].categories.length; i++){
             		// categories += '<label for="'+data[0].categories[i].pk+'" class="ui-btn ui-corner-all ui-btn-inherit ui-btn-icon-left ui-checkbox-off">'+data[0].categories[i].fields.category_pt+'</label><input type="checkbox" id="'+data[0].categories[i].pk	+'">';
-            		categories += '<a href="#" class="ui-btn" data-category-id="'+data[0].categories[i].pk+'">'+data[0].categories[i].fields.category_pt+'</a>';
+            		categories += '<a href="#" class="ui-btn category" data-category-id="'+data[0].categories[i].pk+'">'+data[0].categories[i].fields.category_pt+'</a>';
             	}
             	$('#game .ui-content').html(categories+'<div/>');
             	$('#game .ui-content').trigger('create');
@@ -186,6 +184,37 @@ $(document).ready(function(){
             },
             crossDomain:false
         });
+	});
+
+	$(document).on("click touchstart", '#game .category', function(){
+		var cat = $(this).data('category-id');
+		$.mobile.changePage( '#getPlayer', { transition: "slide"});
+
+	});
+
+	$('#getPlayer').on("pagecreate", function(event){
+
+		var cont = setInterval(function(){ contador() }, 1000);
+
+		function contador() {
+		    var val = $(".ui-loader h1 span").html();
+		    var sec= parseInt(val);
+		    if((sec-1) == 0){
+		    	clearInterval(cont);
+		    	$.mobile.loading( "hide" );
+		    }
+		    $(".ui-loader h1 span").html(sec-1);
+		}
+
+	    setTimeout(function(){
+			$.mobile.loading( "show", {
+	            text: "Buscando um oponente...",
+	            textVisible: true,
+	            theme: "a",
+	            textonly: false
+			});
+			$(".ui-loader h1").append(" <span>30</span>");
+		});
 	});
 
 });
