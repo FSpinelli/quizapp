@@ -89,7 +89,7 @@ $(document).ready(function(){
 
 
 	// carrega a pagina de configuracao inicial
-	$('#categories').on("pagecreate",function(event){
+	$('#categories').on("pageshow",function(event){
 		// carrega a lista de todas as categorias disponiveis
         $.ajax({
             url: baseUrl+"/categories/",
@@ -99,9 +99,10 @@ $(document).ready(function(){
 			    xhr.setRequestHeader ("Authorization", "JWT "+localStorage.token);
 			},
             success: function(data, status, s) {
+            	console.log(data);
             	var categories = "";
             	for(i=0; i<data[0].categories.length; i++){
-            		categories += '<label for="'+data[0].categories[i].pk+'" class="ui-btn ui-corner-all ui-btn-inherit ui-btn-icon-left ui-checkbox-off">'+data[0].categories[i].fields.category_pt+'</label><input type="checkbox" id="'+data[0].categories[i].pk	+'">';
+            		categories += '<label for="'+data[0].categories[i].pk+'" class="ui-btn ui-corner-all ui-btn-inherit ui-btn-icon-left ui-checkbox-off">'+data[0].categories[i].fields.category+'</label><input type="checkbox" id="'+data[0].categories[i].pk	+'">';
             	}
             	$('form[name="categories"] fieldset').html(categories);
             	$('form[name="categories"] fieldset').trigger('create');
@@ -120,7 +121,7 @@ $(document).ready(function(){
             },
             crossDomain:false
         });
-	});
+	}).on("pagehide",function(event){ $(this).find("fieldset").empty() });
 
 	$(document).on("click touchstart", 'form[name="categories"] fieldset .ui-checkbox', function(){
 		var catId = $(this).find('input').attr('id');
@@ -161,7 +162,8 @@ $(document).ready(function(){
 	    }
 	});
 
-	$('#game').on("pagecreate",function(event){
+	$('#game').on("pageshow",function(event){
+		$('#game .ui-content').html("");
         $.ajax({
             url: baseUrl+"/categories/",
             dataType : 'json',
@@ -170,10 +172,14 @@ $(document).ready(function(){
 			    xhr.setRequestHeader ("Authorization", "JWT "+localStorage.token);
 			},
             success: function(data, status, s) {
+
             	var categories = '<div data-role="controlgroup">';
-            	for(i=0; i<data[0].categories.length; i++){
-            		// categories += '<label for="'+data[0].categories[i].pk+'" class="ui-btn ui-corner-all ui-btn-inherit ui-btn-icon-left ui-checkbox-off">'+data[0].categories[i].fields.category_pt+'</label><input type="checkbox" id="'+data[0].categories[i].pk	+'">';
-            		categories += '<a href="#" class="ui-btn category" data-category-id="'+data[0].categories[i].pk+'">'+data[0].categories[i].fields.category_pt+'</a>';
+            	for(i=0; i<data[0].userCategory.length; i++){
+            		for(x=0; x<data[0].categories.length; x++){
+            			if(data[0].categories[x].pk == data[0].userCategory[i].fields.category){
+            				categories += '<a href="#" class="ui-btn category" data-category-id="'+data[0].categories[x].pk+'">'+data[0].categories[x].fields.category+'</a>';
+            			}
+            		}
             	}
             	$('#game .ui-content').html(categories+'<div/>');
             	$('#game .ui-content').trigger('create');
@@ -184,7 +190,7 @@ $(document).ready(function(){
             },
             crossDomain:false
         });
-	});
+	}).on("pagehide",function(event){ $(this).find(".ui-content").empty() });
 
 	$(document).on("click touchstart", '#game .category', function(){
 		var cat = $(this).data('category-id');
