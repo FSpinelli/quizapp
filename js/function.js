@@ -194,25 +194,36 @@ $(document).ready(function(){
 
 	$(document).on("click touchstart", '#game .category', function(){
 		var cat = $(this).data('category-id');
-		$.mobile.changePage( '#getPlayer', { transition: "slide"});
 
-	});
-
-	$('#getPlayer').on("pagecreate", function(event){
-
-		var cont = setInterval(function(){ contador() }, 1000);
-
-		function contador() {
-		    var val = $(".ui-loader h1 span").html();
-		    var sec= parseInt(val);
-		    if((sec-1) == 0){
-		    	clearInterval(cont);
-		    	$.mobile.loading( "hide" );
-		    }
-		    $(".ui-loader h1 span").html(sec-1);
+		if(typeof(Storage)!=="undefined") {
+		    localStorage.gameCat=cat;            
 		}
 
+		$.mobile.changePage( '#getPlayer', { transition: "slide"});
+	});
+
+	var contador = {
+	    start : function() {
+	        this.interval = setInterval(function(){
+			    var val = $(".ui-loader h1 span").html();
+			    var sec= parseInt(val);
+
+			    if((sec-1) == 0){
+			    	contador.stop();
+			    	$.mobile.loading( "hide" );
+			    }
+			    $(".ui-loader h1 span").html(sec-1);
+	        },1000);
+	    },
+	    stop : function() {
+	        clearInterval(this.interval);
+	    }
+	}
+
+	$('#getPlayer').on("pageshow", function(event){
 	    setTimeout(function(){
+			contador.stop();
+			contador.start();
 			$.mobile.loading( "show", {
 	            text: "Buscando um oponente...",
 	            textVisible: true,
@@ -221,6 +232,24 @@ $(document).ready(function(){
 			});
 			$(".ui-loader h1").append(" <span>30</span>");
 		});
+
+		$.ajax({
+            url: baseUrl+"/game-start/"+localStorage.gameCat+"/",
+            dataType : 'json',
+            type: 'POST',
+			beforeSend: function (xhr) {
+			    xhr.setRequestHeader ("Authorization", "JWT "+localStorage.token);
+			},
+            success: function(data, status, s) {
+            	console.log(data);
+            },
+            error : function(res) {
+            	console.log(res);
+                alert('Ops! Ocorreu algum erro. Tente mais tarde.');
+            },
+            crossDomain:false
+		});
+
 	});
 
 });

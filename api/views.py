@@ -51,3 +51,11 @@ def user_categories(request, category_id):
     elif request.method == 'DELETE':
         get_object_or_404(UserCategory, user=user, category=category).delete()
         return HttpResponse(200)
+
+@api_view(['POST'])
+def game_start(request, category_id):
+    category = Category.objects.filter(pk=category_id);
+    game_session = GameSession.objects.filter(category=category);
+
+
+    return HttpResponse(serializers.serialize("json", game_session))

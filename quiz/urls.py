@@ -15,4 +15,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^categories/$', views.categories),
     url(r'^user-categories/(?P<category_id>\d+)/$', views.user_categories),
+    url(r'^game-start/(?P<category_id>\d+)/$', views.game_start),
 ]
