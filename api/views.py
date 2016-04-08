@@ -52,10 +52,18 @@ def user_categories(request, category_id):
         get_object_or_404(UserCategory, user=user, category=category).delete()
         return HttpResponse(200)
 
-@api_view(['POST'])
+@api_view(['POST'])   
 def game_start(request, category_id):
-    category = Category.objects.filter(pk=category_id);
-    game_session = GameSession.objects.filter(category=category);
+    user = User.objects.get(pk=request.user.pk)
+    category = Category.objects.filter(pk=category_id)[0];
+    game_session = GameSession.objects.filter(category=category, player2=None)
 
-
-    return HttpResponse(serializers.serialize("json", game_session))
+    if len(game_session) > 0:
+        game_session.update(player2=user)
+        return HttpResponse(serializers.serialize("json", game_session))
+    else:
+        new_game_session = GameSession()
+        new_game_session.player1 = user
+        new_game_session.category = category
+        new_game_session.save()
+        return HttpResponse(serializers.serialize("json", new_game_session))

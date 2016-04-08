@@ -17,14 +17,11 @@ class UserCategory(models.Model):
 		return self.user.username
 
 class GameSession(models.Model):
-	player1 = models.ForeignKey(User, null=True, related_name='player1', editable=False)
-	player2 = models.ForeignKey(User, null=True, related_name='player2', editable=False)
+	player1 = models.ForeignKey(User, null=True, related_name='player1')
+	player2 = models.ForeignKey(User, null=True, blank=True, related_name='player2')
 	category = models.ForeignKey(Category, null=True, on_delete=models.PROTECT)
-	start = models.DateTimeField(null=True, auto_now_add=True, editable=False)
+	start = models.DateTimeField(null=True, auto_now_add=True)
 	end = models.DateTimeField(null=True, auto_now=True)
-
-	def __str__(self):
-		return self.pk
 
 class Question(models.Model):
 	category = models.ForeignKey(Category, null=True, on_delete=models.PROTECT)
