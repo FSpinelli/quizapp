@@ -235,7 +235,7 @@ $(document).ready(function(){
 
 		$.ajax({
             url: baseUrl+"/game-start/"+localStorage.gameCat+"/",
-            dataType : 'json',
+            dataType : 'text',
             type: 'POST',
 			beforeSend: function (xhr) {
 			    xhr.setRequestHeader ("Authorization", "JWT "+localStorage.token);

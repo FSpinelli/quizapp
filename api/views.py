@@ -15,6 +15,8 @@ from rest_framework.permissions import AllowAny
 
 from permissions import IsStaffOrTargetUser
 
+import time
+
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -56,14 +58,37 @@ def user_categories(request, category_id):
 def game_start(request, category_id):
     user = User.objects.get(pk=request.user.pk)
     category = Category.objects.filter(pk=category_id)[0];
-    game_session = GameSession.objects.filter(category=category, player2=None)
+    # game_session = GameSession.objects.filter(category=category, player2=None)
 
-    if len(game_session) > 0:
-        game_session.update(player2=user)
-        return HttpResponse(serializers.serialize("json", game_session))
+    # if len(game_session) > 0:
+    #     game_session.update(player2=user)
+    #     game_session = GameSession.objects.filter(category=category, player2=user).latest('start')
+    #     return HttpResponse(serializers.serialize("json", game_session))
+    # else:
+    #     new_game_session = GameSession()
+    #     new_game_session.player1 = user
+    #     new_game_session.category = category
+    #     new_game_session.save()
+    #     return HttpResponse(serializers.serialize("json", new_game_session))    
+
+    game, created = GameSession.objects.get_or_create(
+         category=category,
+         player2=None,
+         defaults={'player1':user, 'category':category},
+    )
+
+    g = GameSession.objects.filter(pk=game.pk)
+
+    if created:
+        sec = 30
+        while sec > 0:
+            if g.values_list('player2', flat=True)[0] <> None:
+                return HttpResponse(serializers.serialize("json", g))
+            time.sleep(1)
+            sec = sec-1
+            
+        g.delete()
+        return HttpResponse(404)   
     else:
-        new_game_session = GameSession()
-        new_game_session.player1 = user
-        new_game_session.category = category
-        new_game_session.save()
-        return HttpResponse(serializers.serialize("json", new_game_session))
+        g.update(player2=user)
+        return HttpResponse(serializers.serialize("json", g))    
